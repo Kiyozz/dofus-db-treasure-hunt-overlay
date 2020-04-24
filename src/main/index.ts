@@ -90,7 +90,7 @@ class Application {
         pointer-events: none;
       }
       
-      #directions, #menu, #startingPosition button, #startingPosition input, #hintName {
+      #directions, #menu, #startingPosition button, #startingPosition input, #hintName, #worldSelection span {
         pointer-events: all;
       }
       
