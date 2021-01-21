@@ -113,7 +113,7 @@ async function dev() {
   watchMain()
 
   await mainBuild()
-  await startMain()
+  startMain()
 }
 
 dev()

@@ -1,10 +1,15 @@
 {
   "name": "dofus-hunt-overlay",
   "version": "0.2.0",
+  "author": {
+    "name": "WushuLate",
+    "url": "https://github.com/Kiyozz",
+    "email": "kevinturmel@gmail.com"
+  },
   "private": true,
   "scripts": {
     "dev": "node scripts/dev.mjs",
-    "build:electron": "node scripts/build.mjs",
+    "build": "node scripts/build.mjs",
     "package": "electron-builder -p=never"
   },
   "devDependencies": {
@@ -24,5 +29,49 @@
     "prettier": "^2.2.1",
     "rimraf": "^3.0.2",
     "typescript": "~4.1.2"
+  },
+  "build": {
+    "appId": "io.kiyozz.dofushunt",
+    "productName": "Dofus Hunt Overlay",
+    "copyright": "Copyright © WushuLate",
+    "extraMetadata": {
+      "name": "Dofus Hunt Overlay",
+      "main": "main.js"
+    },
+    "files": [
+      {
+        "from": ".",
+        "filter": [
+          "package.json"
+        ]
+      },
+      {
+        "from": "dist/main"
+      }
+    ],
+     "nsis": {
+      "oneClick": true
+    },
+    "win": {
+      "target": [
+        "nsis"
+      ]
+    },
+    "mac": {
+      "target": [
+        "dmg"
+      ]
+    },
+    "linux": {
+      "target": [
+        "deb",
+        "rpm",
+        "AppImage",
+        "tar.gz"
+      ]
+    },
+    "directories": {
+      "buildResources": "resources"
+    }
   }
 }

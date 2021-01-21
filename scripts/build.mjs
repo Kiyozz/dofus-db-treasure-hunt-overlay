@@ -20,8 +20,6 @@ async function build() {
   console.info(track(), 'Start')
   clean()
 
-  const rendererCompiler = webpack(webpackRendererConfig())
-
   console.info(track(), 'Creating production build...')
 
   await esbuild

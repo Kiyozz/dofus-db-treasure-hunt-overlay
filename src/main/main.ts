@@ -107,7 +107,6 @@ class Application {
   }
 
   private preload(): string {
-    console.log(electronApp.getAppPath())
     return path.join(electronApp.getAppPath(), 'preload.js')
   }
 }
