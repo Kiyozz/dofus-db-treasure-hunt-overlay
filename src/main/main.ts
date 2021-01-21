@@ -22,7 +22,9 @@ class Application {
       webPreferences: {
         nodeIntegration: false,
         devTools: true,
-        preload: this.passTrough()
+        contextIsolation: true,
+        enableRemoteModule: true,
+        preload: this.preload()
       },
       alwaysOnTop: true,
       frame: false,
@@ -57,55 +59,56 @@ class Application {
         -webkit-user-select: none;
         -webkit-app-region: drag;
       }
-      
+
       #menu a {
         -webkit-app-region: no-drag;
       }
-      
+
       body, #menu {
         background: transparent !important;
       }
-      
+
       #donateBox + h1, #donateBox + h1 + p, #bottomBox, #closeBottomBox, #startingPosition > h2, #forgottenHint, #misplacedHint, #hint h2, #semiColon {
         display: none;
       }
-      
+
       #semiColon + button {
         margin-left: 10px;
       }
-      
+
       #startingPosition {
         padding-top: 15px;
       }
-      
+
       #left, #right, #bottom, #top {
         background: white !important;
       }
-      
+
       .nightMode #left, .nightMode #right, .nightMode #bottom, .nightMode #top {
         background: #2f2f2f !important;
       }
-      
+
       body {
         pointer-events: none;
       }
-      
+
       #directions, #menu, #startingPosition button, #startingPosition input, #hintName, #worldSelection span {
         pointer-events: all;
       }
-      
+
       #result #firstLine svg {
         width: 24px !important;
       }
-      
+
       #result #firstLine span {
         font-size: 44px !important;
       }
     `
   }
 
-  private passTrough(): string {
-    return path.join(electronApp.getAppPath(), 'yo.js')
+  private preload(): string {
+    console.log(electronApp.getAppPath())
+    return path.join(electronApp.getAppPath(), 'preload.js')
   }
 }
 

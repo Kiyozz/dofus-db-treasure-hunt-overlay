@@ -1,29 +1,28 @@
 {
   "name": "dofus-hunt-overlay",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "private": true,
-  "dependencies": {
-    "electron-transparency-mouse-fix": "^1.0.0-rc.1",
-    "typescript": "~3.7.2"
-  },
   "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
-    "test": "react-scripts test",
-    "eject": "react-scripts eject",
-    "start:electron": "cross-env TS_NODE_PROJECT=./tsconfig.electron.json NODE_ENV=development electron -r ts-node/register src/main/index.ts",
-    "build:electron": "tsc -p tsconfig.electron.json",
-    "package": "gulp"
+    "dev": "node scripts/dev.mjs",
+    "build:electron": "node scripts/build.mjs",
+    "package": "electron-builder -p=never"
   },
   "devDependencies": {
-    "@types/node": "^12.0.0",
-    "@types/electron": "^1.6.10",
-    "electron": "^8.2.3",
-    "electron-packager": "^14.2.1",
-    "gulp": "^4.0.2",
-    "gulp-cli": "^2.2.0",
-    "cross-env": "^7.0.2",
-    "del": "^5.1.0",
-    "ts-node": "^8.9.0"
+    "@typescript-eslint/eslint-plugin": "^4.14.0",
+    "@typescript-eslint/parser": "^4.14.0",
+    "chokidar": "^3.5.1",
+    "debounce-fn": "^4.0.0",
+    "dependency-tree": "^8.0.0",
+    "electron": "~11.2.0",
+    "electron-builder": "^22.9.1",
+    "electron-transparency-mouse-fix": "^1.0.0-rc.1",
+    "esbuild": "^0.8.33",
+    "eslint": "^7.18.0",
+    "eslint-config-prettier": "^7.2.0",
+    "eslint-plugin-import": "^2.22.1",
+    "eslint-plugin-prettier": "^3.3.1",
+    "prettier": "^2.2.1",
+    "rimraf": "^3.0.2",
+    "typescript": "~4.1.2"
   }
 }
