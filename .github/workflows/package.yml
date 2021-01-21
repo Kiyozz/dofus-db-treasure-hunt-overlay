@@ -1,0 +1,84 @@
+name: Package
+
+on:
+  workflow_dispatch:
+
+jobs:
+  linux:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v1
+        with:
+          node-version: 14
+      - uses: actions/cache@v2.1.3
+        id: yarn-cache-${{ runner.os }}
+        with:
+          path: '**/node_modules'
+          key: ${{ runner.os }}-modules-${{ hashFiles('**/yarn.lock') }}
+      - name: Dependencies
+        run: yarn
+      - name: Generate
+        run: |
+          yarn build
+          yarn package
+      - uses: actions/upload-artifact@v2
+        with:
+          name: package deb
+          path: dist/*.deb
+      - uses: actions/upload-artifact@v2
+        with:
+          name: package AppImage
+          path: dist/*.AppImage
+      - uses: actions/upload-artifact@v2
+        with:
+          name: package tar.gz
+          path: dist/*.tar.gz
+      - uses: actions/upload-artifact@v2
+        with:
+          name: package rpm
+          path: dist/*.rpm
+  windows:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v1
+        with:
+          node-version: 14
+      - uses: actions/cache@v2.1.3
+        id: yarn-cache-${{ runner.os }}
+        with:
+          path: '**/node_modules'
+          key: ${{ runner.os }}-modules-${{ hashFiles('**/yarn.lock') }}
+      - name: Dependencies
+        run: yarn
+      - name: Generate
+        run: |
+          yarn build
+          yarn package
+      - uses: actions/upload-artifact@v2
+        with:
+          name: package exe
+          path: dist/*.exe
+  macos:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v1
+        with:
+          node-version: 14
+      - uses: actions/cache@v2.1.3
+        id: yarn-cache-${{ runner.os }}
+        with:
+          path: '**/node_modules'
+          key: ${{ runner.os }}-modules-${{ hashFiles('**/yarn.lock') }}
+      - name: Dependencies
+        run: yarn
+      - name: Generate
+        run: |
+          yarn build
+          yarn package
+      - uses: actions/upload-artifact@v2
+        with:
+          name: package dmg
+          path: dist/*.dmg

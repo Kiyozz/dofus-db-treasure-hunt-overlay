@@ -1,6 +1,7 @@
 {
   "name": "dofus-hunt-overlay",
   "version": "0.2.0",
+  "description": "Dofus Map Overlay of Hunt",
   "author": {
     "name": "WushuLate",
     "url": "https://github.com/Kiyozz",
@@ -68,7 +69,8 @@
         "rpm",
         "AppImage",
         "tar.gz"
-      ]
+      ],
+      "category": "Game"
     },
     "directories": {
       "buildResources": "resources"
