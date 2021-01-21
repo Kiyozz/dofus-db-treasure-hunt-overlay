@@ -34,10 +34,6 @@ jobs:
         with:
           name: package tar.gz
           path: dist/*.tar.gz
-      - uses: actions/upload-artifact@v2
-        with:
-          name: package rpm
-          path: dist/*.rpm
   windows:
     runs-on: windows-latest
     steps:
