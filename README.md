@@ -6,6 +6,10 @@ Pour Windows, macOS et Linux.
 
 Affiche un overlay du site [Dofus Map - Hunt](https://dofus-map.com/hunt) pour permettre aux utilisateurs de Dofus Map ayant qu'un seul écran de pouvoir utiliser Dofus Map plus simplement.
 
+## Démo
+
+[Vidéo](https://drive.google.com/file/d/1YpkttBS0yZPKNgPfgBqwhNIG8uvDNS9N/view?usp=sharing)
+
 ## Installation
 
 Télécharger la dernière release sur ici [Releases](https://github.com/Kiyozz/dofus-hunt-overlay/releases).
@@ -27,6 +31,10 @@ Télécharger le fichier correspondant à votre distribution.
 ## Description
 
 Show an overlay of [Dofus Map - Hunt](https://dofus-map.com/hunt) for Dofus Map's users with one monitor.
+
+## Demo
+
+[Video](https://drive.google.com/file/d/1YpkttBS0yZPKNgPfgBqwhNIG8uvDNS9N/view?usp=sharing)
 
 ## Installation
 
