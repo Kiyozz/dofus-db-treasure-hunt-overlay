@@ -1,80 +1,92 @@
 name: Package
 
 on:
-  workflow_dispatch:
+  push:
+    tags:
+      - v*
 
 jobs:
   linux:
-    runs-on: ubuntu-latest
+    runs-on: [ubuntu-latest, macos-latest, windows-latest]
     steps:
       - uses: actions/checkout@v2
-      - uses: actions/setup-node@v1
+      - name: Cache .pnpm-store
+        uses: actions/cache@v1
         with:
-          node-version: 14
-      - uses: actions/cache@v2.1.3
-        id: yarn-cache-ubuntu
+          path: ~/.pnpm-store
+          key: ${{ runner.os }}-node${{ matrix.node-version }}-${{ hashFiles('**/pnpm-lock.yaml') }}
+      - uses: actions/setup-node@v1.4.4
         with:
-          path: '**/node_modules'
-          key: "${{ runner.os }}-modules-${{ hashFiles('**/yarn.lock') }}"
+          node-version: 15.12
+
       - name: Dependencies
-        run: yarn
+        uses: pnpm/action-setup@v1.2.1
+        with:
+          version: 5.18.8
+          run_install: true
       - name: Generate
         run: |
-          yarn build
-          yarn package
-      - uses: actions/upload-artifact@v2
+          pnpm build
+          pnpm package
+
+      - uses: actions/create-release@v1
+        id: create_release
+        if: success()
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          name: package deb
-          path: dist/*.deb
-      - uses: actions/upload-artifact@v2
+          tag_name: ${{ github.ref }}
+          release_name: ${{ github.ref }}
+          draft: true
+          body: ''
+          prerelease: false
+
+      - uses: actions/upload-release-asset@v1
+        if: success() && matric.os == 'macos-latest'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          name: package AppImage
-          path: dist/*.AppImage
-      - uses: actions/upload-artifact@v2
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: './dist/Dofus Hunt Overlay.dmg'
+          asset_name: Dofus.Hunt.Overlay.dmg
+          asset_content_type: application/octet-stream
+
+      - uses: actions/upload-release-asset@v1
+        if: success() && matric.os == 'windows-latest'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          name: package tar.gz
-          path: dist/*.tar.gz
-  windows:
-    runs-on: windows-latest
-    steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-node@v1
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: './dist/Dofus Hunt Overlay.Setup.exe'
+          asset_name: Dofus.Hunt.Overlay.Setup.exe
+          asset_content_type: application/octet-stream
+
+      - uses: actions/upload-release-asset@v1
+        if: success() && matric.os == 'ubuntu-latest'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          node-version: 14
-      - uses: actions/cache@v2.1.3
-        id: yarn-cache-windows
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: './dist/Dofus Hunt Overlay.deb'
+          asset_name: Dofus.Hunt.Overlay.deb
+          asset_content_type: application/vnd.debian.binary-package
+
+      - uses: actions/upload-release-asset@v1
+        if: success() && matric.os == 'ubuntu-latest'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          path: '**/node_modules'
-          key: "${{ runner.os }}-modules-${{ hashFiles('**/yarn.lock') }}"
-      - name: Dependencies
-        run: yarn
-      - name: Generate
-        run: |
-          yarn build
-          yarn package
-      - uses: actions/upload-artifact@v2
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: './dist/Dofus Hunt Overlay.AppImage'
+          asset_name: Dofus.Hunt.Overlay.AppImage
+          asset_content_type: application/vnd.appimage
+
+      - uses: actions/upload-release-asset@v1
+        if: success() && matric.os == 'ubuntu-latest'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          name: package exe
-          path: dist/*.exe
-  macos:
-    runs-on: macos-latest
-    steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-node@v1
-        with:
-          node-version: 14
-      - uses: actions/cache@v2.1.3
-        id: yarn-cache-macos
-        with:
-          path: '**/node_modules'
-          key: "${{ runner.os }}-modules-${{ hashFiles('**/yarn.lock') }}"
-      - name: Dependencies
-        run: yarn
-      - name: Generate
-        run: |
-          yarn build
-          yarn package
-      - uses: actions/upload-artifact@v2
-        with:
-          name: package dmg
-          path: dist/*.dmg
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: './dist/Dofus Hunt Overlay.tar.gz'
+          asset_name: Dofus.Hunt.Overlay.tar.gz
+          asset_content_type: application/gzip

@@ -7,7 +7,6 @@
     "sourceMap": true,
     "allowSyntheticDefaultImports": true,
     "skipLibCheck": true,
-    "noImplicitReturns": false,
     "baseUrl": "./"
   }
 }

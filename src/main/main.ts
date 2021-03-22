@@ -21,35 +21,34 @@ class Application {
       height: 530,
       webPreferences: {
         nodeIntegration: false,
-        devTools: true,
         contextIsolation: true,
         enableRemoteModule: true,
-        preload: this.preload()
+        preload: this.preload(),
       },
       alwaysOnTop: true,
       frame: false,
       transparent: true,
       acceptFirstMouse: true,
       x: 0,
-      y: 90
+      y: 90,
     })
 
     this.win.setIgnoreMouseEvents(true, { forward: true })
   }
 
   private load() {
-    this.win!.loadURL('https://dofus-map.com/hunt')
+    this.win?.loadURL('https://dofus-map.com/hunt')
   }
 
   private onClose() {
-    this.win!.on('closed', () => {
+    this.win?.on('closed', () => {
       this.win = null
     })
   }
 
   private inject() {
-    this.win!.webContents.on('did-finish-load', () => {
-      this.win!.webContents.insertCSS(this.css())
+    this.win?.webContents.on('did-finish-load', () => {
+      this.win?.webContents.insertCSS(this.css())
     })
   }
 
@@ -66,6 +65,10 @@ class Application {
 
       body, #menu {
         background: transparent !important;
+      }
+
+      body #menu a, body #menu {
+        color: #ccc;
       }
 
       #donateBox + h1, #donateBox + h1 + p, #bottomBox, #closeBottomBox, #startingPosition > h2, #forgottenHint, #misplacedHint, #hint h2, #semiColon {
@@ -86,6 +89,10 @@ class Application {
 
       .nightMode #left, .nightMode #right, .nightMode #bottom, .nightMode #top {
         background: #2f2f2f !important;
+      }
+
+      .nightMode #menu a, .nightMode #menu {
+        color: #ccc;
       }
 
       body {

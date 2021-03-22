@@ -1,6 +1,6 @@
 {
   "name": "dofus-hunt-overlay",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "Dofus Map Overlay of Hunt",
   "author": {
     "name": "WushuLate",
@@ -9,27 +9,25 @@
   },
   "private": true,
   "scripts": {
-    "dev": "node scripts/dev.mjs",
-    "build": "node scripts/build.mjs",
-    "package": "electron-builder -p=never"
+    "dev": "electron-esbuild dev",
+    "build": "electron-esbuild build",
+    "package": "electron-builder"
   },
   "devDependencies": {
-    "@typescript-eslint/eslint-plugin": "~4.14.0",
-    "@typescript-eslint/parser": "~4.14.0",
-    "chokidar": "~3.5.1",
-    "debounce-fn": "~4.0.0",
-    "dependency-tree": "~8.0.0",
-    "electron": "~11.2.0",
-    "electron-builder": "~22.9.1",
+    "@typescript-eslint/eslint-plugin": "~4.18.0",
+    "@typescript-eslint/parser": "~4.18.0",
+    "electron": "~12.0.1",
+    "electron-builder": "~22.10.5",
+    "electron-esbuild": "~1.2.4",
     "electron-transparency-mouse-fix": "~1.0.0-rc.1",
-    "esbuild": "~0.8.33",
-    "eslint": "~7.18.0",
-    "eslint-config-prettier": "~7.2.0",
+    "esbuild": "~0.9.6",
+    "eslint": "~7.22.0",
+    "eslint-config-prettier": "~8.1.0",
     "eslint-plugin-import": "~2.22.1",
     "eslint-plugin-prettier": "~3.3.1",
     "prettier": "~2.2.1",
     "rimraf": "~3.0.2",
-    "typescript": "~4.1.2"
+    "typescript": "~4.2.3"
   },
   "build": {
     "appId": "io.kiyozz.dofushunt",
@@ -39,6 +37,7 @@
       "name": "Dofus Hunt Overlay",
       "main": "main.js"
     },
+    "artifactName": "${productName}.${ext}",
     "files": [
       {
         "from": ".",
@@ -50,7 +49,7 @@
         "from": "dist/main"
       }
     ],
-     "nsis": {
+    "nsis": {
       "oneClick": true
     },
     "win": {
@@ -60,7 +59,7 @@
     },
     "mac": {
       "target": [
-        "dmg"
+        "zip"
       ]
     },
     "linux": {
@@ -73,6 +72,7 @@
     },
     "directories": {
       "buildResources": "resources"
-    }
+    },
+    "publish": null
   }
 }
