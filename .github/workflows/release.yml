@@ -1,4 +1,4 @@
-name: Package
+name: Release
 
 on:
   push:
@@ -6,8 +6,11 @@ on:
       - v*
 
 jobs:
-  linux:
-    runs-on: [ubuntu-latest, macos-latest, windows-latest]
+  release:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [windows-latest, ubuntu-latest, macos-latest]
     steps:
       - uses: actions/checkout@v2
       - name: Cache .pnpm-store
@@ -42,7 +45,7 @@ jobs:
           prerelease: false
 
       - uses: actions/upload-release-asset@v1
-        if: success() && matric.os == 'macos-latest'
+        if: success() && ${{ matrix.os == 'macos-latest' }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
@@ -52,7 +55,7 @@ jobs:
           asset_content_type: application/octet-stream
 
       - uses: actions/upload-release-asset@v1
-        if: success() && matric.os == 'windows-latest'
+        if: success() && ${{ matrix.os == 'windows-latest' }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
@@ -62,7 +65,7 @@ jobs:
           asset_content_type: application/octet-stream
 
       - uses: actions/upload-release-asset@v1
-        if: success() && matric.os == 'ubuntu-latest'
+        if: success() && ${{ matrix.os == 'ubuntu-latest' }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
@@ -72,7 +75,7 @@ jobs:
           asset_content_type: application/vnd.debian.binary-package
 
       - uses: actions/upload-release-asset@v1
-        if: success() && matric.os == 'ubuntu-latest'
+        if: success() && ${{ matrix.os == 'ubuntu-latest' }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
@@ -82,7 +85,7 @@ jobs:
           asset_content_type: application/vnd.appimage
 
       - uses: actions/upload-release-asset@v1
-        if: success() && matric.os == 'ubuntu-latest'
+        if: success() && ${{ matrix.os == 'ubuntu-latest' }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
