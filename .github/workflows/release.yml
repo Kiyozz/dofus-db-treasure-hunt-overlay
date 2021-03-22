@@ -6,90 +6,86 @@ on:
       - v*
 
 jobs:
-  release:
-    runs-on: ${{ matrix.os }}
-    strategy:
-      matrix:
-        os: [windows-latest, ubuntu-latest, macos-latest]
+  linux:
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
+      - uses: actions/setup-node@v1
+        with:
+          node-version: 15.12
       - name: Cache .pnpm-store
         uses: actions/cache@v1
         with:
           path: ~/.pnpm-store
           key: ${{ runner.os }}-node${{ matrix.node-version }}-${{ hashFiles('**/pnpm-lock.yaml') }}
-      - uses: actions/setup-node@v1.4.4
-        with:
-          node-version: 15.12
-
       - name: Dependencies
         uses: pnpm/action-setup@v1.2.1
         with:
-          version: 5.18.8
+          version: 5.18.7
           run_install: true
       - name: Generate
         run: |
           pnpm build
           pnpm package
-
-      - uses: actions/create-release@v1
-        id: create_release
-        if: success()
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - uses: actions/upload-artifact@v2
         with:
-          tag_name: ${{ github.ref }}
-          release_name: ${{ github.ref }}
-          draft: true
-          body: ''
-          prerelease: false
-
-      - uses: actions/upload-release-asset@v1
-        if: success() && ${{ matrix.os == 'macos-latest' }}
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          name: package deb
+          path: dist/*.deb
+      - uses: actions/upload-artifact@v2
         with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: './dist/Dofus Hunt Overlay.dmg'
-          asset_name: Dofus.Hunt.Overlay.dmg
-          asset_content_type: application/octet-stream
-
-      - uses: actions/upload-release-asset@v1
-        if: success() && ${{ matrix.os == 'windows-latest' }}
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          name: package AppImage
+          path: dist/*.AppImage
+      - uses: actions/upload-artifact@v2
         with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: './dist/Dofus Hunt Overlay.Setup.exe'
-          asset_name: Dofus.Hunt.Overlay.Setup.exe
-          asset_content_type: application/octet-stream
-
-      - uses: actions/upload-release-asset@v1
-        if: success() && ${{ matrix.os == 'ubuntu-latest' }}
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          name: package tar.gz
+          path: dist/*.tar.gz
+  windows:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v1
         with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: './dist/Dofus Hunt Overlay.deb'
-          asset_name: Dofus.Hunt.Overlay.deb
-          asset_content_type: application/vnd.debian.binary-package
-
-      - uses: actions/upload-release-asset@v1
-        if: success() && ${{ matrix.os == 'ubuntu-latest' }}
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          node-version: 15.12
+      - name: Cache .pnpm-store
+        uses: actions/cache@v1
         with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: './dist/Dofus Hunt Overlay.AppImage'
-          asset_name: Dofus.Hunt.Overlay.AppImage
-          asset_content_type: application/vnd.appimage
-
-      - uses: actions/upload-release-asset@v1
-        if: success() && ${{ matrix.os == 'ubuntu-latest' }}
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          path: ~/.pnpm-store
+          key: ${{ runner.os }}-node${{ matrix.node-version }}-${{ hashFiles('**/pnpm-lock.yaml') }}
+      - name: Dependencies
+        uses: pnpm/action-setup@v1.2.1
         with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: './dist/Dofus Hunt Overlay.tar.gz'
-          asset_name: Dofus.Hunt.Overlay.tar.gz
-          asset_content_type: application/gzip
+          version: 5.18.7
+          run_install: true
+      - name: Generate
+        run: |
+          pnpm build
+          pnpm package
+      - uses: actions/upload-artifact@v2
+        with:
+          name: package exe
+          path: dist/*.exe
+  macos:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v1
+        with:
+          node-version: 15.12
+      - name: Cache .pnpm-store
+        uses: actions/cache@v1
+        with:
+          path: ~/.pnpm-store
+          key: ${{ runner.os }}-node${{ matrix.node-version }}-${{ hashFiles('**/pnpm-lock.yaml') }}
+      - name: Dependencies
+        uses: pnpm/action-setup@v1.2.1
+        with:
+          version: 5.18.7
+          run_install: true
+      - name: Generate
+        run: |
+          pnpm build
+          pnpm package
+      - uses: actions/upload-artifact@v2
+        with:
+          name: package dmg
+          path: dist/*.dmg
