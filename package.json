@@ -18,9 +18,9 @@
     "@typescript-eslint/parser": "~4.18.0",
     "electron": "~12.0.1",
     "electron-builder": "~22.10.5",
-    "electron-esbuild": "~1.2.4",
+    "electron-esbuild": "^1.2.5",
     "electron-transparency-mouse-fix": "~1.0.0-rc.1",
-    "esbuild": "~0.9.6",
+    "esbuild": "^0.10.0",
     "eslint": "~7.22.0",
     "eslint-config-prettier": "~8.1.0",
     "eslint-plugin-import": "~2.22.1",
@@ -61,7 +61,7 @@
     },
     "mac": {
       "target": [
-        "zip"
+        "dmg"
       ]
     },
     "linux": {
