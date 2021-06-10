@@ -20,8 +20,6 @@ class Application {
       width: 323,
       height: 530,
       webPreferences: {
-        nodeIntegration: false,
-        contextIsolation: true,
         enableRemoteModule: true,
         preload: this.preload(),
       },
@@ -125,7 +123,5 @@ electronApp.on('window-all-closed', () => {
     electronApp.quit()
   }
 })
-
-electronApp.allowRendererProcessReuse = true
 
 electronApp.on('ready', () => app.start())
