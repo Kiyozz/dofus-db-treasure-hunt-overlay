@@ -39,6 +39,7 @@ Show an overlay of [Dofus Map - Hunt](https://dofus-map.com/hunt) for Dofus Map'
 ## Installation
 
 Download the latest release here [Releases](https://github.com/Kiyozz/dofus-hunt-overlay/releases).
+,
 
 ### Windows
 

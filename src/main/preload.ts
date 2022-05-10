@@ -1,3 +1,6 @@
-const TMF = require('electron-transparency-mouse-fix')
+import { ipcRenderer, contextBridge } from 'electron'
 
-new TMF({ fixPointerEvents: 'auto' })
+contextBridge.exposeInMainWorld('dmo', {
+  quit: () => ipcRenderer.invoke('quit'),
+  goToWebsite: () => ipcRenderer.invoke('go-to-website'),
+})
