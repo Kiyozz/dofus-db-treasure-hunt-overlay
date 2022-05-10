@@ -1,3 +1,9 @@
+## 2.1.0
+
+### Features
+
+Better overlay below width 300px
+
 ## 2.0.1
 
 ### Features

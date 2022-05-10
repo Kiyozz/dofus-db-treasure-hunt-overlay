@@ -64,6 +64,10 @@ const css = `
     border: 1px var(--q-color-primary) solid;
   }
   
+  body, html {
+    min-height: 100vh !important;
+  }
+  
   .treasure-hunt-directions, .q-field__inner {
     background: var(--q-color-primary) !important;
   }
@@ -192,6 +196,12 @@ const css = `
       width: 100%;
     }
   }
+  
+  @media screen and (max-width: 299px) {
+    span button[type="button"][role="button"] {
+      display: none !important;
+    }
+  }
 `
 
 function createWindow() {
@@ -201,9 +211,8 @@ function createWindow() {
 
   win = new BrowserWindow({
     width: 300,
-    height: 545,
-    minWidth: 300,
-    minHeight: 545,
+    height: 484,
+    minWidth: 200,
     webPreferences: {
       preload: path.join(app.getAppPath(), 'preload.js'),
     },
