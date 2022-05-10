@@ -1,4 +1,10 @@
-## Unreleased
+## 2.0.1
+
+### Features
+
+Hide notifications "copy to clipboard"
+
+## 2.0.0
 
 ### Breaking changes
 
