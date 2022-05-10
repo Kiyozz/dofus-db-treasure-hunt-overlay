@@ -1,7 +1,7 @@
 {
-  "name": "dofus-hunt-overlay",
-  "version": "1.0.3",
-  "description": "Dofus Map Overlay of Hunt",
+  "name": "dofus-db-treasure-hunt-overlay",
+  "version": "2.0.0",
+  "description": "DofusDB Treasure Hunt Overlay",
   "author": {
     "name": "WushuLate",
     "url": "https://github.com/Kiyozz",
