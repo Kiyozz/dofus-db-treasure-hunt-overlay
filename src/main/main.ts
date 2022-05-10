@@ -121,7 +121,8 @@ const css = `
   .q-card > div:nth-child(4),
   .q-card > div.text-center.q-pa-xs.text-grey-6,
   .q-loading-bar,
-  .q-footer {
+  .q-footer,
+  .q-notifications {
     display: none !important;
   }
   
