@@ -62,10 +62,11 @@ const css = `
   body {
     background: transparent !important;
     border: 1px var(--q-color-primary) solid;
+    overflow: hidden;
   }
   
   body, html {
-    min-height: 100vh !important;
+    height: 100vh !important;
   }
   
   .treasure-hunt-directions, .q-field__inner {
@@ -74,7 +75,6 @@ const css = `
 
   main > div.bg-primary {
     background: transparent !important;
-    /*pointer-events: none;*/
   }
 
   .q-page-container {
@@ -213,6 +213,7 @@ function createWindow() {
     width: 300,
     height: 484,
     minWidth: 200,
+    minHeight: 100,
     webPreferences: {
       preload: path.join(app.getAppPath(), 'preload.js'),
     },

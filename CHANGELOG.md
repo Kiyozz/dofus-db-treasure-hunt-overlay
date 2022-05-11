@@ -1,3 +1,9 @@
+## 2.1.1
+
+### Bug fixes
+
+- Remove scroll bar when the window is too small
+
 ## 2.1.0
 
 ### Features
