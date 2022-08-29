@@ -7,16 +7,27 @@ const js = `
   const goToWebsite = document.createElement('a')
   const quitButton = document.createElement('button')
   const topLayout = document.createElement('div')
-  
+  const dropDownDiv = document.createElement('div')
+  const languageButton = document.createElement('button')
+  const dropDownOptions = document.createElement('div')
+
+
+  const LanguageOptionEnglish = document.createElement('a')
+  const LanguageOptionFrench = document.createElement('a')
+
   topLayout.classList.add('dmo-top-layout')
   quitButton.classList.add('dmo-quit-btn')
+  languageButton.classList.add('dmo-quit-btn')
   goToWebsite.classList.add('dmo-go-to-website-btn')
+  dropDownDiv.classList.add('dropdown')
+  dropDownOptions.classList.add('dropdown-content')
   
   quitButton.innerText = 'Quit app'
   quitButton.setAttribute('tab-index', '-1')
   quitButton.addEventListener('click', () => {
     dmo.quit()
   })
+  
   
   goToWebsite.innerText = 'DOFUS DB'
   goToWebsite.setAttribute('tab-index', '-1')
@@ -25,9 +36,45 @@ const js = `
     dmo.goToWebsite()
   })
   
+  
+  
+
+
+  dropDownOptions.setAttribute('id', 'dropdown')
+
+  languageButton.innerText = 'Language'
+  languageButton.setAttribute('tab-index', '-1')
+  languageButton.addEventListener('click',() =>{
+    document.getElementById('dropdown').classList.toggle('show')
+  })
+  LanguageOptionEnglish.innerText = 'English'
+  LanguageOptionEnglish.setAttribute('value' ,'en')
+  LanguageOptionEnglish.setAttribute('id' ,'language')
+  LanguageOptionEnglish.addEventListener('click',(evt) =>{
+    dmo.changeLanguageToEn()
+  })
+
+  LanguageOptionFrench.innerText = 'French'
+  LanguageOptionFrench.setAttribute('value' ,'fr')
+  LanguageOptionFrench.setAttribute('id' ,'language')
+  LanguageOptionFrench.addEventListener('click',(evt) =>{
+    dmo.changeLanguageToFr()
+  })
+
+
+  dropDownOptions.appendChild(LanguageOptionEnglish)
+  dropDownOptions.appendChild(LanguageOptionFrench)
+
+  dropDownDiv.appendChild(languageButton)
+  dropDownDiv.appendChild(dropDownOptions)
+
   topLayout.appendChild(goToWebsite);
+  topLayout.appendChild(dropDownDiv)
   topLayout.appendChild(quitButton);
   
+
+ 
+
   document.querySelectorAll('input[type="number"]').forEach(elem => {
     elem.setAttribute('type', 'text')
   })
@@ -39,13 +86,33 @@ const css = `
     position: fixed;
     top: 4px;
     right: 4px;
-    display: flex;
+    display: inline-block;;
     align-items: center;
     gap: 4px;
     color: white;
     app-region: no-drag;
+    margin-bottom: 100px;
   }
-  
+  .dropdown {
+    display: inline-block;
+  }
+  .dropdown a:hover {background-color: var(--q-color-dark);}
+  .dropdown-content {
+    display: none;
+    position: absolute;
+    background-color: var(--q-color-primary);
+    min-width: 160px;
+    overflow: auto;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+  }
+  .dropdown-content a {
+    color: white;
+    padding: 6px 8px;
+    text-decoration: none;
+    display: block;
+    cursor: pointer;
+  }
+  .show {display: block;}
   .dmo-quit-btn {
     cursor: pointer;
     border: none;
@@ -236,7 +303,7 @@ function createWindow() {
     winStore.set({ x: newX, y: newY })
   })
 
-  void win.loadURL('https://dofusdb.fr/fr/tools/treasure-hunt', { userAgent: 'Chrome' })
+  void win.loadURL('https://dofusdb.fr/en/tools/treasure-hunt', { userAgent: 'Chrome' })
 
   win.webContents.on('did-finish-load', async () => {
     try {
@@ -258,7 +325,15 @@ function createWindow() {
   })
 
   ipcMain.handle('go-to-website', () => {
-    void shell.openExternal('https://dofusdb.fr/fr/tools/treasure-hunt')
+    void shell.openExternal('https://dofusdb.fr/en/tools/treasure-hunt')
+  })
+  ipcMain.handle('changeLanguageToEn',()=>{
+
+    win?.loadURL('https://dofusdb.fr/en/tools/treasure-hunt', { userAgent: 'Chrome' })
+  })
+  ipcMain.handle('changeLanguageToFr',()=>{
+
+    win?.loadURL('https://dofusdb.fr/fr/tools/treasure-hunt', { userAgent: 'Chrome' })
   })
 }
 
