@@ -51,14 +51,14 @@ const js = `
   languageOptionEnglish.setAttribute('value' ,'en')
   languageOptionEnglish.setAttribute('id' ,'language')
   languageOptionEnglish.addEventListener('click',(evt) =>{
-    dmo.changeLanguageToEn()
+    dmo.changeLanguage('en')
   })
 
   languageOptionFrench.innerText = 'French'
   languageOptionFrench.setAttribute('value' ,'fr')
   languageOptionFrench.setAttribute('id' ,'language')
   languageOptionFrench.addEventListener('click',(evt) =>{
-    dmo.changeLanguageToFr()
+    dmo.changeLanguage('fr')
   })
 
 
@@ -330,12 +330,8 @@ function createWindow() {
   ipcMain.handle('go-to-website', () => {
     void shell.openExternal('https://dofusdb.fr/en/tools/treasure-hunt')
   })
-  ipcMain.handle('changeLanguageToEn',()=>{
-    languageStore.set({lan: 'en'})
-    loadUrl()
-  })
-  ipcMain.handle('changeLanguageToFr',()=>{
-    languageStore.set({lan: 'fr'})
+  ipcMain.handle('changeLanguage',(event,data :string)=>{
+    languageStore.set({lan: data})
     loadUrl()
   })
 }
