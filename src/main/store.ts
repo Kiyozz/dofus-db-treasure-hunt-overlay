@@ -10,3 +10,12 @@ export function createWindowPositionStore() {
     },
   })
 }
+export function createLanguageStore(){
+  return new ElectronStore({
+    configFileMode: 0o600,
+    name:'dmo_language',
+    defaults: {
+      lan: 'fr',
+    },
+  })
+}

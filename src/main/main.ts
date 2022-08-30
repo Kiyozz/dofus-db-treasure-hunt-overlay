@@ -1,6 +1,6 @@
 import path from 'path'
 import { BrowserWindow, app, ipcMain, shell } from 'electron'
-import { createWindowPositionStore } from './store'
+import { createWindowPositionStore , createLanguageStore } from './store'
 
 let win: BrowserWindow | null = null
 const js = `
@@ -12,8 +12,8 @@ const js = `
   const dropDownOptions = document.createElement('div')
 
 
-  const LanguageOptionEnglish = document.createElement('a')
-  const LanguageOptionFrench = document.createElement('a')
+  const languageOptionEnglish  = document.createElement('a')
+  const languageOptionFrench = document.createElement('a')
 
   topLayout.classList.add('dmo-top-layout')
   quitButton.classList.add('dmo-quit-btn')
@@ -47,23 +47,23 @@ const js = `
   languageButton.addEventListener('click',() =>{
     document.getElementById('dropdown').classList.toggle('show')
   })
-  LanguageOptionEnglish.innerText = 'English'
-  LanguageOptionEnglish.setAttribute('value' ,'en')
-  LanguageOptionEnglish.setAttribute('id' ,'language')
-  LanguageOptionEnglish.addEventListener('click',(evt) =>{
+  languageOptionEnglish.innerText = 'English'
+  languageOptionEnglish.setAttribute('value' ,'en')
+  languageOptionEnglish.setAttribute('id' ,'language')
+  languageOptionEnglish.addEventListener('click',(evt) =>{
     dmo.changeLanguageToEn()
   })
 
-  LanguageOptionFrench.innerText = 'French'
-  LanguageOptionFrench.setAttribute('value' ,'fr')
-  LanguageOptionFrench.setAttribute('id' ,'language')
-  LanguageOptionFrench.addEventListener('click',(evt) =>{
+  languageOptionFrench.innerText = 'French'
+  languageOptionFrench.setAttribute('value' ,'fr')
+  languageOptionFrench.setAttribute('id' ,'language')
+  languageOptionFrench.addEventListener('click',(evt) =>{
     dmo.changeLanguageToFr()
   })
 
 
-  dropDownOptions.appendChild(LanguageOptionEnglish)
-  dropDownOptions.appendChild(LanguageOptionFrench)
+  dropDownOptions.appendChild(languageOptionEnglish)
+  dropDownOptions.appendChild(languageOptionFrench)
 
   dropDownDiv.appendChild(languageButton)
   dropDownDiv.appendChild(dropDownOptions)
@@ -273,9 +273,10 @@ const css = `
 
 function createWindow() {
   const winStore = createWindowPositionStore()
+  const languageStore = createLanguageStore()
 
   const { x = 0, y = 90 } = winStore.store
-
+  const {lan = 'fr'} = languageStore.store
   win = new BrowserWindow({
     width: 300,
     height: 484,
@@ -303,7 +304,7 @@ function createWindow() {
     winStore.set({ x: newX, y: newY })
   })
 
-  void win.loadURL('https://dofusdb.fr/en/tools/treasure-hunt', { userAgent: 'Chrome' })
+  void loadUrl()
 
   win.webContents.on('did-finish-load', async () => {
     try {
@@ -323,17 +324,19 @@ function createWindow() {
   ipcMain.handle('quit', () => {
     win?.close()
   })
-
+  function loadUrl(){
+    win?.loadURL('https://dofusdb.fr/'+languageStore.get('lan')+'/tools/treasure-hunt', { userAgent: 'Chrome' })
+  }
   ipcMain.handle('go-to-website', () => {
     void shell.openExternal('https://dofusdb.fr/en/tools/treasure-hunt')
   })
   ipcMain.handle('changeLanguageToEn',()=>{
-
-    win?.loadURL('https://dofusdb.fr/en/tools/treasure-hunt', { userAgent: 'Chrome' })
+    languageStore.set({lan: 'en'})
+    loadUrl()
   })
   ipcMain.handle('changeLanguageToFr',()=>{
-
-    win?.loadURL('https://dofusdb.fr/fr/tools/treasure-hunt', { userAgent: 'Chrome' })
+    languageStore.set({lan: 'fr'})
+    loadUrl()
   })
 }
 
