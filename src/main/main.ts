@@ -20,7 +20,8 @@ const js = `
     'Português' : 'pt',
     'Italiano' : 'it'
   }
-  Object.entries(dropDownOptions).forEach(([key,value]) =>{
+
+  Object.entries(dropDownOptions).forEach(([key, value]) => {
     temp = document.createElement('a')
     temp.innerText = key
     temp.setAttribute('value' , value)
