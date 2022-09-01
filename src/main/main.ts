@@ -1,6 +1,6 @@
 import path from 'path'
 import { BrowserWindow, app, ipcMain, shell } from 'electron'
-import { createWindowPositionStore , createLanguageStore } from './store'
+import { createWindowPositionStore, createLanguageStore } from './store'
 
 let win: BrowserWindow | null = null
 const js = `
@@ -9,25 +9,38 @@ const js = `
   const topLayout = document.createElement('div')
   const dropDownDiv = document.createElement('div')
   const languageButton = document.createElement('button')
-  const dropDownOptions = document.createElement('div')
+  const dropDownOptionsDiv = document.createElement('div')
 
+  const dropDownOptions = {
+    'English' : 'en',
+    'French' : 'fr',
+    'Deutsch' : 'de',
+    'Español' : 'es',
+    'Português' : 'pt',
+    'Italiano' : 'it'
+  }
+  Object.entries(dropDownOptions).forEach(([key,value]) =>{ 
+    temp = document.createElement('a')
+    temp.innerText = key
+    temp.setAttribute('value' , value)
+    temp.setAttribute('id','language')
+    dropDownOptionsDiv.appendChild(temp)
+  })
 
-  const languageOptionEnglish  = document.createElement('a')
-  const languageOptionFrench = document.createElement('a')
 
   topLayout.classList.add('dmo-top-layout')
   quitButton.classList.add('dmo-quit-btn')
-  languageButton.classList.add('dmo-quit-btn')
+  languageButton.classList.add('dmo-quit-btn','dropbtn')
   goToWebsite.classList.add('dmo-go-to-website-btn')
   dropDownDiv.classList.add('dropdown')
-  dropDownOptions.classList.add('dropdown-content')
+  dropDownOptionsDiv.classList.add('dropdown-content')
   
+
   quitButton.innerText = 'Quit app'
   quitButton.setAttribute('tab-index', '-1')
   quitButton.addEventListener('click', () => {
     dmo.quit()
   })
-  
   
   goToWebsite.innerText = 'DOFUS DB'
   goToWebsite.setAttribute('tab-index', '-1')
@@ -36,50 +49,46 @@ const js = `
     dmo.goToWebsite()
   })
   
-  
-  
 
-
-  dropDownOptions.setAttribute('id', 'dropdown')
-
+  dropDownOptionsDiv.setAttribute('id', 'dropdown')
   languageButton.innerText = 'Language'
   languageButton.setAttribute('tab-index', '-1')
   languageButton.addEventListener('click',() =>{
     document.getElementById('dropdown').classList.toggle('show')
   })
-  languageOptionEnglish.innerText = 'English'
-  languageOptionEnglish.setAttribute('value' ,'en')
-  languageOptionEnglish.setAttribute('id' ,'language')
-  languageOptionEnglish.addEventListener('click',(evt) =>{
-    dmo.changeLanguage('en')
-  })
 
-  languageOptionFrench.innerText = 'French'
-  languageOptionFrench.setAttribute('value' ,'fr')
-  languageOptionFrench.setAttribute('id' ,'language')
-  languageOptionFrench.addEventListener('click',(evt) =>{
-    dmo.changeLanguage('fr')
-  })
-
-
-  dropDownOptions.appendChild(languageOptionEnglish)
-  dropDownOptions.appendChild(languageOptionFrench)
 
   dropDownDiv.appendChild(languageButton)
-  dropDownDiv.appendChild(dropDownOptions)
+  dropDownDiv.appendChild(dropDownOptionsDiv)
 
-  topLayout.appendChild(goToWebsite);
+  topLayout.appendChild(goToWebsite)
   topLayout.appendChild(dropDownDiv)
-  topLayout.appendChild(quitButton);
+  topLayout.appendChild(quitButton)
   
-
- 
 
   document.querySelectorAll('input[type="number"]').forEach(elem => {
     elem.setAttribute('type', 'text')
   })
-  
-  document.body.appendChild(topLayout);0
+
+
+  window.onclick = function(event){
+    if (!event.target.matches('.dropbtn')) {
+      var dropdown = document.getElementsByClassName("dropdown-content")[0];
+      if (dropdown.classList.contains('show')){
+        dropdown.classList.remove('show')
+      }
+      var i;
+    }
+  }
+
+  document.body.appendChild(topLayout)
+
+  document.querySelectorAll('#language').forEach(elem => {
+    elem.addEventListener('click',() =>{
+      dmo.changeLanguage(elem.getAttribute('value'))
+    })
+  })
+
 `
 const css = `
   .dmo-top-layout {
@@ -104,6 +113,7 @@ const css = `
     min-width: 160px;
     overflow: auto;
     box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    app-region: no-drag;
   }
   .dropdown-content a {
     color: white;
@@ -276,7 +286,6 @@ function createWindow() {
   const languageStore = createLanguageStore()
 
   const { x = 0, y = 90 } = winStore.store
-  const {lan = 'fr'} = languageStore.store
   win = new BrowserWindow({
     width: 300,
     height: 484,
@@ -324,15 +333,15 @@ function createWindow() {
   ipcMain.handle('quit', () => {
     win?.close()
   })
-  function loadUrl(){
-    win?.loadURL('https://dofusdb.fr/'+languageStore.get('lan')+'/tools/treasure-hunt', { userAgent: 'Chrome' })
+  async function loadUrl() {
+    await win?.loadURL(`https://dofusdb.fr/${languageStore.get('lan')}/tools/treasure-hunt`, { userAgent: 'Chrome' })
   }
   ipcMain.handle('go-to-website', () => {
     void shell.openExternal('https://dofusdb.fr/en/tools/treasure-hunt')
   })
-  ipcMain.handle('changeLanguage',(event,data :string)=>{
-    languageStore.set({lan: data})
-    loadUrl()
+  ipcMain.handle('changeLanguage', async (event, data: string) => {
+    languageStore.set({ lan: data })
+    await loadUrl()
   })
 }
 
