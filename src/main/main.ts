@@ -1,58 +1,136 @@
 import path from 'path'
 import { BrowserWindow, app, ipcMain, shell } from 'electron'
-import { createWindowPositionStore } from './store'
+import { createWindowPositionStore, createLanguageStore } from './store'
+import type { Languages } from './types/languages'
 
 let win: BrowserWindow | null = null
 const js = `
   const goToWebsite = document.createElement('a')
   const quitButton = document.createElement('button')
   const topLayout = document.createElement('div')
-  
+  const dropDownDiv = document.createElement('div')
+  const languageButton = document.createElement('button')
+  const dropDownOptionsDiv = document.createElement('div')
+
+  const dropDownOptions = {
+    'English' : 'en',
+    'French' : 'fr',
+    'Deutsch' : 'de',
+    'Español' : 'es',
+    'Português' : 'pt',
+    'Italiano' : 'it'
+  }
+
+  Object.entries(dropDownOptions).forEach(([key, value]) => {
+    temp = document.createElement('a')
+    temp.innerText = key
+    temp.setAttribute('value' , value)
+    temp.setAttribute('id','language')
+    dropDownOptionsDiv.appendChild(temp)
+  })
+
+
   topLayout.classList.add('dmo-top-layout')
   quitButton.classList.add('dmo-quit-btn')
+  languageButton.classList.add('dmo-quit-btn', 'dropbtn')
   goToWebsite.classList.add('dmo-go-to-website-btn')
-  
+  dropDownDiv.classList.add('dropdown')
+  dropDownOptionsDiv.classList.add('dropdown-content')
+
   quitButton.innerText = 'Quit app'
   quitButton.setAttribute('tab-index', '-1')
   quitButton.addEventListener('click', () => {
     dmo.quit()
   })
-  
+
   goToWebsite.innerText = 'DOFUS DB'
   goToWebsite.setAttribute('tab-index', '-1')
   goToWebsite.addEventListener('click', (evt) => {
     evt.preventDefault()
     dmo.goToWebsite()
   })
-  
-  topLayout.appendChild(goToWebsite);
-  topLayout.appendChild(quitButton);
-  
+
+
+  dropDownOptionsDiv.setAttribute('id', 'dropdown')
+  languageButton.innerText = 'Language'
+  languageButton.setAttribute('tab-index', '-1')
+  languageButton.addEventListener('click',() =>{
+    document.getElementById('dropdown').classList.toggle('show')
+  })
+
+  dropDownDiv.appendChild(languageButton)
+  dropDownDiv.appendChild(dropDownOptionsDiv)
+
+  topLayout.appendChild(goToWebsite)
+  topLayout.appendChild(dropDownDiv)
+  topLayout.appendChild(quitButton)
+
   document.querySelectorAll('input[type="number"]').forEach(elem => {
     elem.setAttribute('type', 'text')
   })
-  
-  document.body.appendChild(topLayout);0
+
+  window.onclick = function(event){
+    if (!event.target.matches('.dropbtn')) {
+      const dropdown = document.querySelector('.dropdown-content');
+      if (dropdown.classList.contains('show')){
+        dropdown.classList.remove('show')
+      }
+    }
+  }
+
+  document.body.appendChild(topLayout)
+
+  document.querySelectorAll('#language').forEach(elem => {
+    elem.addEventListener('click',() =>{
+      dmo.changeLanguage(elem.getAttribute('value'))
+    })
+  })
+
 `
 const css = `
   .dmo-top-layout {
     position: fixed;
     top: 4px;
     right: 4px;
-    display: flex;
+    display: inline-block;
     align-items: center;
     gap: 4px;
     color: white;
     app-region: no-drag;
+    margin-bottom: 100px;
   }
-  
+  .dropdown {
+    display: inline-block;
+  }
+  .dropdown a:hover {
+    background-color: var(--q-color-dark);
+  }
+  .dropdown-content {
+    display: none;
+    position: absolute;
+    background-color: var(--q-color-primary);
+    min-width: 160px;
+    overflow: auto;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    app-region: no-drag;
+  }
+  .dropdown-content a {
+    color: white;
+    padding: 6px 8px;
+    text-decoration: none;
+    display: block;
+    cursor: pointer;
+  }
+  .show {
+    display: block;
+  }
   .dmo-quit-btn {
     cursor: pointer;
     border: none;
     background: transparent;
     color: inherit;
   }
-  
+
   .dmo-go-to-website-btn {
     cursor: pointer;
     app-region: no-drag;
@@ -64,11 +142,11 @@ const css = `
     border: 1px var(--q-color-primary) solid;
     overflow: hidden;
   }
-  
+
   body, html {
     height: 100vh !important;
   }
-  
+
   .treasure-hunt-directions, .q-field__inner {
     background: var(--q-color-primary) !important;
   }
@@ -80,42 +158,42 @@ const css = `
   .q-page-container {
     padding-top: 0 !important;
   }
-  
+
   .q-page {
     padding: 0 !important;
   }
-  
+
   .q-page > div:first-child {
     padding-top: 0;
   }
-  
+
   .q-page > div > div:nth-child(3) { /* Buttons */
     padding-top: 1rem;
     -webkit-app-region: drag;
   }
-  
+
   .q-page > div > div:nth-child(3) button,
   .q-page > div > div:nth-child(3) label {
     -webkit-app-region: no-drag;
   }
-  
+
   .q-page > div > div:nth-child(3) > span {
     user-select: none;
   }
-  
+
   .q-page > div > div:nth-child(7) {
     margin-top: 1.5rem;
   }
-  
+
   .q-page > div > div:nth-child(9) {
     text-align: center;
     font-size: 0.75rem;
   }
-  
+
   main.q-page, #q-app > .q-layout {
     min-height: unset !important;
   }
-  
+
   .q-page > div > div:first-child, /* Title */
   .q-page > div > div:nth-child(2), /* Position */
   .q-page > div > div:nth-child(4), /* Direction */
@@ -129,74 +207,74 @@ const css = `
   .q-notifications {
     display: none !important;
   }
-  
+
   .q-card > div:first-child.text-h5, .q-card > div:nth-child(2).text-h6 {
     font-size: 1rem;
   }
-  
+
   .q-card > div:first-child.text-h5 i {
     margin-right: 6px;
     font-size: 1em !important;
   }
-  
+
   .q-card > div:nth-child(2).text-h6 {
     font-size: 0;
     padding: 20px;
   }
-  
+
   .q-card > div:nth-child(2).text-h6 span {
     font-size: 1rem;
   }
- 
+
   .q-layout__shadow::after {
     box-shadow: none !important;
   }
-  
+
   .q-field__control {
     padding: 0 4px !important;
   }
-  
+
   .q-field__bottom, .q-field__append {
     display: none !important;
   }
-  
+
   @media screen and (min-width: 599px) {
     .q-page > div:first-child {
       padding-right: 0;
       padding-left: 0;
     }
-    
+
     .q-card {
       display: flex;
       position: relative;
       align-items: center;
     }
-  
+
     .q-card > div:first-child.text-h5 {
       position: absolute;
       left: 0;
       top: 0;
     }
   }
-  
+
   @media screen and (max-width: 599px) {
     .q-page > div > div:nth-child(3) {
       padding-top: 2rem;
     }
-  
+
     .q-card > div:nth-child(2).text-h6, .q-card > div:first-child.text-h5 {
       padding: 2px;
     }
-  
+
     span button[type="button"][role="button"] {
       font-size: 1rem !important;
     }
-    
+
     .q-card {
       width: 100%;
     }
   }
-  
+
   @media screen and (max-width: 299px) {
     span button[type="button"][role="button"] {
       display: none !important;
@@ -206,9 +284,9 @@ const css = `
 
 function createWindow() {
   const winStore = createWindowPositionStore()
+  const languageStore = createLanguageStore()
 
   const { x = 0, y = 90 } = winStore.store
-
   win = new BrowserWindow({
     width: 300,
     height: 484,
@@ -236,7 +314,7 @@ function createWindow() {
     winStore.set({ x: newX, y: newY })
   })
 
-  void win.loadURL('https://dofusdb.fr/fr/tools/treasure-hunt', { userAgent: 'Chrome' })
+  void loadUrl()
 
   win.webContents.on('did-finish-load', async () => {
     try {
@@ -257,8 +335,17 @@ function createWindow() {
     win?.close()
   })
 
+  async function loadUrl() {
+    await win?.loadURL(`https://dofusdb.fr/${languageStore.get('lan')}/tools/treasure-hunt`, { userAgent: 'Chrome' })
+  }
+
   ipcMain.handle('go-to-website', () => {
-    void shell.openExternal('https://dofusdb.fr/fr/tools/treasure-hunt')
+    void shell.openExternal('https://dofusdb.fr/en/tools/treasure-hunt')
+  })
+
+  ipcMain.handle('changeLanguage', async (_, lan: Languages) => {
+    languageStore.set({ lan })
+    await loadUrl()
   })
 }
 
